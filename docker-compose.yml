@@ -16,12 +16,22 @@ x-common-labels: &default-labels
 services:
   portainer:
     image: portainer/portainer-ce:latest
-    ports:
-      - 9443:9443
-      volumes:
-        - data:/data
-        - /var/run/docker.sock:/var/run/docker.sock
+    container_name: portainer
     restart: unless-stopped
+    ports:
+      - "9443:9443"  # HTTPS (disarankan)
+      - "9000:9000"  # HTTP (legacy support)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    cpus: 0.5
+    mem_limit: 512m
+    networks:
+      - monitoring
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
     
   grafana:
     image: grafana/grafana:${GRAFANA_VERSION:-12.0.0}
@@ -217,7 +227,7 @@ services:
 volumes:
   grafana-data: {}
   prometheus-data: {}
-  data: {}
+  portainer-data: {}
 
 networks:
   monitoring:
