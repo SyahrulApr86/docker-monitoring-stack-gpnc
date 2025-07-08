@@ -33,6 +33,8 @@ services:
       - ./dashboards/node-metrics.json:/var/lib/grafana/dashboards/node-metrics.json:ro
       - ./dashboards/container-metrics.json:/var/lib/grafana/dashboards/container-metrics.json:ro
       - ./dashboards/log-search.json:/var/lib/grafana/dashboards/log-search.json:ro
+      - ./dashboards/node-exporter-full.json:/var/lib/grafana/dashboards/node-exporter-full.json:ro
+      - ./dashboards/node-exporter-full-v2.json:/var/lib/grafana/dashboards/node-exporter-full-v2.json:ro
       - grafana-data:/var/lib/grafana
     depends_on:
       - prometheus
