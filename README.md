@@ -12,6 +12,7 @@ Get your monitoring stack up and running with one command using a Docker Compose
 - **[Alertmanager](https://github.com/prometheus/alertmanager)**: Alerting system.
 - **[Uncomplicated Alert Receiver](https://github.com/jamesread/uncomplicated-alert-receiver)**: UI with Received Alerts.
 - **[Loki](https://github.com/grafana/loki)**: Logs (including explore-logs).
+- **[DCGM-Exporter](https://github.com/NVIDIA/dcgm-exporter)**: NVIDIA GPU metrics.
 
 ## Makefile
 
@@ -107,6 +108,52 @@ The following endpoints are available:
 | Alertmanager                 | http://alertmanager:9093                  | http://localhost:9093 |
 | Uncomplicated Alert Receiver | http://uncomplicated-alert-receiver:9094  | http://localhost:9094 |
 | Loki                         | http://loki:3100                          | http://localhost:3100 |
+| DCGM-Exporter                | http://dcgm-exporter:9400                | http://localhost:9400 |
+## GPU Monitoring
+
+This stack includes NVIDIA GPU monitoring through DCGM-Exporter, providing comprehensive GPU telemetry including:
+
+- GPU utilization and memory usage
+- Temperature monitoring
+- Power consumption tracking
+- Tensor Core utilization
+- GPU clock speeds and performance metrics
+
+### Prerequisites
+
+To use GPU monitoring, ensure you have:
+
+1. **NVIDIA GPU**: Compatible NVIDIA GPU with proper drivers installed
+2. **NVIDIA Container Runtime**: Docker configured with NVIDIA Container Runtime
+3. **NVIDIA Drivers**: Recent NVIDIA drivers (470+ recommended)
+
+### Verification
+
+Check your GPU setup:
+
+```bash
+nvidia-smi
+docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi
+```
+
+### GPU Dashboard
+
+The GPU metrics dashboard provides visualization for:
+- Real-time GPU temperature and power usage
+- Memory utilization and allocation
+- GPU compute and tensor core utilization
+- Historical performance trends
+- Energy consumption tracking
+
+### GPU Alerts
+
+The following GPU alerts are configured:
+- High temperature warnings (>85°C) and critical alerts (>90°C)
+- High memory usage alerts (>90%)
+- Extended high utilization warnings (>95% for 10+ minutes)
+- Power usage alerts when approaching maximum capacity
+- GPU service availability monitoring
+
 
 ## Cleanup
 

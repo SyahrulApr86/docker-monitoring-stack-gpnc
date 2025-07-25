@@ -53,6 +53,7 @@ services:
       - ./dashboards/log-search.json:/var/lib/grafana/dashboards/log-search.json:ro
       - ./dashboards/node-exporter-full.json:/var/lib/grafana/dashboards/node-exporter-full.json:ro
       - ./dashboards/node-exporter-full-v2.json:/var/lib/grafana/dashboards/node-exporter-full-v2.json:ro
+      - ./dashboards/gpu-metrics.json:/var/lib/grafana/dashboards/gpu-metrics.json:ro
       - grafana-data:/var/lib/grafana
     depends_on:
       - prometheus
@@ -215,6 +216,26 @@ services:
     command: -config.file=/etc/promtail/docker-config.yaml
     depends_on:
       - loki
+    cpus: 0.5
+    mem_limit: 512m
+    networks:
+      - monitoring
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+  dcgm-exporter:
+    image: nvcr.io/nvidia/k8s/dcgm-exporter:${DCGM_EXPORTER_VERSION:-4.2.3-4.3.0-ubuntu22.04}
+    container_name: dcgm-exporter
+    restart: unless-stopped
+    runtime: nvidia
+    ports:
+      - "9400:9400"
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - DCGM_EXPORTER_LISTEN=0.0.0.0:9400
+      - DCGM_EXPORTER_KUBERNETES=false
+    cap_add:
+      - SYS_ADMIN
     cpus: 0.5
     mem_limit: 512m
     networks:

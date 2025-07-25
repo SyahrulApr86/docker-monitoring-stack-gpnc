@@ -277,3 +277,59 @@ groups:
     labels:
       severity: critical
 
+
+- name: gpu-monitoring
+  rules:
+  - alert: GPUHighTemperature
+    annotations:
+      summary: "GPU {{ $labels.gpu }} temperature is high"
+      description: "GPU {{ $labels.gpu }} on {{ $labels.Hostname }} temperature is above 85°C.\nVALUE = {{ $value }}°C\nLABELS = {{ $labels }}"
+    expr: DCGM_FI_DEV_GPU_TEMP > 85
+    for: 2m
+    labels:
+      severity: warning
+
+  - alert: GPUCriticalTemperature
+    annotations:
+      summary: "GPU {{ $labels.gpu }} temperature is critical"
+      description: "GPU {{ $labels.gpu }} on {{ $labels.Hostname }} temperature is above 90°C.\nVALUE = {{ $value }}°C\nLABELS = {{ $labels }}"
+    expr: DCGM_FI_DEV_GPU_TEMP > 90
+    for: 1m
+    labels:
+      severity: critical
+
+  - alert: GPUHighMemoryUsage
+    annotations:
+      summary: "GPU {{ $labels.gpu }} memory usage is high"
+      description: "GPU {{ $labels.gpu }} on {{ $labels.Hostname }} memory usage is above 90%.\nVALUE = {{ $value }}%\nLABELS = {{ $labels }}"
+    expr: (DCGM_FI_DEV_FB_USED / (DCGM_FI_DEV_FB_USED + DCGM_FI_DEV_FB_FREE)) * 100 > 90
+    for: 5m
+    labels:
+      severity: warning
+
+  - alert: GPUHighUtilization
+    annotations:
+      summary: "GPU {{ $labels.gpu }} utilization is high"
+      description: "GPU {{ $labels.gpu }} on {{ $labels.Hostname }} utilization is above 95% for extended period.\nVALUE = {{ $value }}%\nLABELS = {{ $labels }}"
+    expr: DCGM_FI_DEV_GPU_UTIL > 95
+    for: 10m
+    labels:
+      severity: warning
+
+  - alert: GPUHighPowerUsage
+    annotations:
+      summary: "GPU {{ $labels.gpu }} power usage is high"
+      description: "GPU {{ $labels.gpu }} on {{ $labels.Hostname }} power usage is above 90% of maximum.\nVALUE = {{ $value }}W\nLABELS = {{ $labels }}"
+    expr: DCGM_FI_DEV_POWER_USAGE > (DCGM_FI_DEV_POWER_MAX * 0.9)
+    for: 5m
+    labels:
+      severity: warning
+
+  - alert: GPUDown
+    annotations:
+      summary: "GPU metrics unavailable"
+      description: "GPU metrics from DCGM-Exporter are not available for {{ $labels.Hostname }}.\nLABELS = {{ $labels }}"
+    expr: up{job="dcgm-exporter"} == 0
+    for: 1m
+    labels:
+      severity: critical
